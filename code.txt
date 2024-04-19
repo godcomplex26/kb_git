@@ -1,0 +1,47 @@
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+def celcius_to_faherenheit(x):
+    return x * 1.8 + 32
+
+data_C = np.array(range(0, 100), )
+
+data_F = celcius_to_faherenheit(data_C)
+print(data_C, '\n')
+print(data_F)
+
+model = Sequential()
+model.add(Dense(1,input_dim=1))
+
+model.compile(loss='mse', optimizer='rmsprop', metrics=['mae'])
+print(model.summary())
+
+# 학습 이전 모델 예측
+print(model.predict([0.01]))
+
+# 학습 모델 저장
+model.save("/content/before_learning.h5")
+
+# 학습 데이터 정제(1로 수렴하기 쉬운 값으로)
+scaled_data_C = data_C
+scaled_data_F = data_F
+
+# 정제 데이터 보기
+print(scaled_data_C)
+print(scaled_data_F)
+
+# 모델 학습
+fit_hist = model.fit(scaled_data_C, scaled_data_F, epochs= 550, verbose=1)
+
+# matplotlib를 통한 학습데이터 시각화
+plt.plot(fit_hist.history['loss'])
+plt.show()
+
+# 학습한 모델 기반 예측
+print(model.predict([0.01]))
+
+model.save("/content/after_learning.h5")
